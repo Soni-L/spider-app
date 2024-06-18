@@ -2,7 +2,7 @@
 
 import { TextField, Button } from "@mui/material";
 import { useRef, useState } from "react";
-import SiteScraper from "./components/SiteScraper";
+import PageRenderer from "./components/PageRenderer";
 
 type SiteViewModalProps = {
   open: boolean;
@@ -28,7 +28,7 @@ export default function Home() {
       >
         <TextField
           size="small"
-          ref={inputUrl}
+          inputRef={inputUrl}
           placeholder="Input url"
         ></TextField>
         <Button
@@ -43,11 +43,13 @@ export default function Home() {
           Open Site
         </Button>
       </div>
-      <SiteScraper
-        open={siteViewModalProps.open}
-        url={siteViewModalProps.url}
-        handleClose={() => setSiteViewModalProps({ open: false, url: "" })}
-      />
+      {siteViewModalProps.open && (
+        <PageRenderer
+          open={siteViewModalProps.open}
+          url={siteViewModalProps.url}
+          handleClose={() => setSiteViewModalProps({ open: false, url: "" })}
+        />
+      )}
     </main>
   );
 }

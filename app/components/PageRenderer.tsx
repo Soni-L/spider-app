@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,7 +11,30 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function SiteScraper({ open, url, handleClose }) {
+export default function PageRenderer({ open, url, handleClose }) {
+  const [html, setHtml] = useState("");
+  const [css, setCss] = useState([]);
+
+  const fetchPageContent = async (url) => {
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/fetch-page?url=${encodeURIComponent(url)}`
+    );
+    const data = await response.json();
+    return data;
+  };
+
+  useEffect(() => {
+    const loadPage = async () => {
+      const data = await fetchPageContent(url);
+      setHtml(data.html);
+      setCss(data.css);
+    };
+
+    loadPage();
+  }, []);
+
   return (
     <Dialog
       fullScreen
@@ -34,11 +57,12 @@ export default function SiteScraper({ open, url, handleClose }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <iframe
-        name={"iframe"}
-        src={url}
-        style={{ height: "200px", width: "200px" }}
-      ></iframe>
+      {html && css.length > 0 && (
+        <div style={{ height: "400px", width: "400px" }}>
+          <style>{css.join("\n")}</style>
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+      )}
     </Dialog>
   );
 }
