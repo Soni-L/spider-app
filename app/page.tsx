@@ -20,19 +20,22 @@ export default function Home() {
         <div
           style={{
             display: "flex",
+            alignItems: "center",
             gap: "10px",
-            padding: "8px 0",
-            height: "55px",
+            padding: "8px",
+            height: "60px",
             backgroundColor: "lightgray",
+            borderBottom: "2px solid gray",
           }}
         >
           <TextField
+            sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
             size="small"
             inputRef={inputUrl}
-            placeholder="Input url"
+            placeholder="Enter the url of your target site"
           ></TextField>
           <Button
-            style={{ borderRadius: "10px", margin: "0" }}
+            style={{ borderRadius: "10px", margin: "0", height: "40px" }}
             variant="contained"
             onClick={() => setTargetSiteUrl(inputUrl?.current?.value || "")}
           >
@@ -44,7 +47,7 @@ export default function Home() {
 
       <div
         style={{
-          backgroundColor: "#F0EAD6",
+          backgroundColor: "lightgray",
           height: "100%",
           width: "300px",
           borderLeft: "3px solid gray",
