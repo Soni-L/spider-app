@@ -4,6 +4,7 @@ import SearchUrlBar from "./SearchUrlBar";
 export default function PageRenderer() {
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
+  const [styles, setStyles] = useState("");
 
   const fetchPageContent = async (url: string) => {
     const response = await fetch(
@@ -17,6 +18,7 @@ export default function PageRenderer() {
 
   const loadPage = async (url: string) => {
     const data = await fetchPageContent(url);
+    setStyles(data.styles);
     setHtml(data.html);
   };
 
@@ -27,9 +29,16 @@ export default function PageRenderer() {
         iframeRef?.current?.contentWindow?.document;
       iframeDocument.open();
       iframeDocument.write(html);
+
+      // Create a new style element
+      const styleElement = iframeDocument.createElement("style");
+      styleElement.textContent = styles;
+      // Append the style element to the head or body
+      iframeDocument.head.appendChild(styleElement);
+
       iframeDocument.close();
     }
-  }, [html]);
+  }, [html, styles]);
 
   return (
     <div
