@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import PageRenderer from "./components/PageRenderer";
+import PageRenderer from "./components/PageRenderer/PageRenderer";
 
 export default function Home() {
   return (
