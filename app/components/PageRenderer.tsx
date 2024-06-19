@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Slide from "@mui/material/Slide";
+import React, { useEffect, useState, useRef } from "react";
+import { TextField, Button } from "@mui/material";
 
-export default function PageRenderer({ url }) {
+export default function PageRenderer() {
+  const inputUrl = useRef<HTMLInputElement | null>(null);
+
   const [html, setHtml] = useState("");
   const [css, setCss] = useState([]);
 
@@ -15,24 +17,58 @@ export default function PageRenderer({ url }) {
     return data;
   };
 
-  useEffect(() => {
-    const loadPage = async () => {
-      const data = await fetchPageContent(url);
-      setHtml(data.html);
-      setCss(data.css);
-    };
-
-    if (url) loadPage();
-  }, [url]);
+  const loadPage = async () => {
+    const data = await fetchPageContent(inputUrl?.current?.value);
+    setHtml(data.html);
+    setCss(data.css);
+  };
 
   return (
-    <div>
-      {html && css.length > 0 && (
-        <>
-          <style>{css.join("\n")}</style>
-          <div dangerouslySetInnerHTML={{ __html: html }} />
-        </>
-      )}
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        overflowY: "hidden",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "8px",
+          backgroundColor: "lightgray",
+          borderBottom: "2px solid gray",
+        }}
+      >
+        <TextField
+          sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
+          size="small"
+          inputRef={inputUrl}
+          placeholder="Enter the url of your target site"
+        ></TextField>
+        <Button
+          style={{ borderRadius: "10px", margin: "0", height: "40px" }}
+          variant="contained"
+          onClick={loadPage}
+        >
+          Go
+        </Button>
+      </div>
+      <div
+        style={{
+          height: "calc(100vh - 110px)",
+          width: "100%",
+          overflowY: "scroll",
+        }}
+      >
+        {html && css.length > 0 && (
+          <>
+            <style>{css.join("\n")}</style>
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+          </>
+        )}
+      </div>
     </div>
   );
 }

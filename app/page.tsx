@@ -1,13 +1,9 @@
 "use client";
 
-import { TextField, Button } from "@mui/material";
 import { useRef, useState } from "react";
 import PageRenderer from "./components/PageRenderer";
 
 export default function Home() {
-  const inputUrl = useRef<HTMLInputElement | null>(null);
-  const [targetSiteUrl, setTargetSiteUrl] = useState<string>("");
-
   return (
     <main
       style={{
@@ -16,40 +12,13 @@ export default function Home() {
         overflow: "hidden",
       }}
     >
-      <div style={{ flexGrow: 1 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "8px",
-            height: "60px",
-            backgroundColor: "lightgray",
-            borderBottom: "2px solid gray",
-          }}
-        >
-          <TextField
-            sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
-            size="small"
-            inputRef={inputUrl}
-            placeholder="Enter the url of your target site"
-          ></TextField>
-          <Button
-            style={{ borderRadius: "10px", margin: "0", height: "40px" }}
-            variant="contained"
-            onClick={() => setTargetSiteUrl(inputUrl?.current?.value || "")}
-          >
-            Go
-          </Button>
-        </div>
-        <PageRenderer url={targetSiteUrl} />
-      </div>
-
+      <PageRenderer />
       <div
         style={{
+          flex: "0 0 auto",
           backgroundColor: "lightgray",
           height: "100%",
-          width: "300px",
+          width: "350px",
           borderLeft: "3px solid gray",
         }}
       ></div>
