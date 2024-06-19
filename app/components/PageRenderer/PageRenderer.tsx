@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
 
 export default function PageRenderer() {
+  const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
-  const [css, setCss] = useState([]);
 
   const fetchPageContent = async (url: string) => {
     const response = await fetch(
@@ -18,8 +18,18 @@ export default function PageRenderer() {
   const loadPage = async (url: string) => {
     const data = await fetchPageContent(url);
     setHtml(data.html);
-    setCss(data.css);
   };
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      const iframeDocument =
+        iframeRef?.current?.contentDocument ||
+        iframeRef?.current?.contentWindow?.document;
+      iframeDocument.open();
+      iframeDocument.write(html);
+      iframeDocument.close();
+    }
+  }, [html]);
 
   return (
     <div
@@ -34,15 +44,13 @@ export default function PageRenderer() {
         style={{
           height: "calc(100vh - 110px)",
           width: "100%",
-          overflowY: "scroll",
         }}
       >
-        {html && css.length >= 0 && (
-          <>
-            {css.length > 0 && <style>{css.join("\n")}</style>}
-            <div dangerouslySetInnerHTML={{ __html: html }} />
-          </>
-        )}
+        <iframe
+          ref={iframeRef}
+          style={{ width: "100%", height: "100%", border: "0", margin: 0 }}
+          title="Embedded Content"
+        />
       </div>
     </div>
   );
