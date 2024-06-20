@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+"use client";
+import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
 
-export default function PageRenderer() {
+export default memo(function PageRenderer() {
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
   const [styles, setStyles] = useState("");
@@ -53,8 +54,9 @@ export default function PageRenderer() {
         event.stopPropagation();
         window.parent.postMessage(
           {
+            originName: "target_site_iframe",
             type: event.type,
-            detail: { x: event.clientX, y: event.clientY, key: event.key },
+            pathname: event.target.tagName,
           },
           "*"
         );
@@ -122,4 +124,4 @@ export default function PageRenderer() {
       </div>
     </div>
   );
-}
+});

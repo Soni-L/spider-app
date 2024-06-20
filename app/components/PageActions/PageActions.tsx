@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+"use client";
+import React, { memo, useEffect, useState } from "react";
+export default memo(function PageActions() {
+  const [eventArray, setEventArray] = useState([]);
 
-export default function PageActions() {
   useEffect(() => {
     const handleIframeEvent = (event) => {
       if (event.origin !== window.location.origin) {
@@ -8,10 +10,14 @@ export default function PageActions() {
         return;
       }
 
-      const { type, detail } = event.data;
+      const { originName, type, pathname } = event.data;
 
-      if (type === "click" || type === "mousemove" || type === "keydown") {
-        console.log(`Event type: ${type}, Detail:`, detail);
+      if (originName !== "target_site_iframe") {
+        return;
+      }
+
+      if (type === "click") {
+        setEventArray((prevArray: any) => [...prevArray, { type, pathname }]);
       }
     };
 
@@ -21,6 +27,7 @@ export default function PageActions() {
       window.removeEventListener("message", handleIframeEvent);
     };
   }, []);
+
   return (
     <div
       style={{
@@ -32,4 +39,4 @@ export default function PageActions() {
       }}
     ></div>
   );
-}
+});

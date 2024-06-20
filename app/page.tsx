@@ -1,4 +1,3 @@
-"use client";
 import PageActions from "./components/PageActions/PageActions";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
 
