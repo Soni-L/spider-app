@@ -30,11 +30,14 @@ export default function PageRenderer() {
       iframeDocument.open();
       iframeDocument.write(html);
 
-      // Create a new style element
-      const styleElement = iframeDocument.createElement("style");
-      styleElement.textContent = styles;
-      // Append the style element to the head or body
-      iframeDocument.head.appendChild(styleElement);
+      if (iframeDocument.head) {
+        // Create a new style element
+        const styleElement = iframeDocument.createElement("style");
+        styleElement.textContent = styles;
+        console.log(styleElement)
+        // Append the style element to the head or body
+        iframeDocument.head.appendChild(styleElement);
+      }
 
       iframeDocument.close();
     }
