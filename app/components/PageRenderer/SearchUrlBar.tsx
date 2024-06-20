@@ -1,8 +1,28 @@
-import React, { useRef } from "react";
-import { TextField, Button } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { TextField, Button, CircularProgress } from "@mui/material";
 
-export default function SearchUrlBar({ onSearch }) {
-  const inputUrl = useRef<HTMLInputElement | null>(null);
+export default function SearchUrlBar({
+  onSearch,
+  loading = false,
+}: {
+  onSearch: Function;
+  loading: boolean;
+}) {
+  const [inputUrl, setInputUrl] = useState<string>("");
+
+  function isValidURL(url: string) {
+    var pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(url);
+  }
+
   return (
     <div
       style={{
@@ -17,15 +37,22 @@ export default function SearchUrlBar({ onSearch }) {
       <TextField
         sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
         size="small"
-        inputRef={inputUrl}
+        value={inputUrl}
+        onChange={(e) => setInputUrl(e.target.value)}
         placeholder="Enter the url of your target site"
+        error={inputUrl.length > 0 && !isValidURL(inputUrl)}
       ></TextField>
       <Button
         style={{ borderRadius: "10px", margin: "0", height: "40px" }}
         variant="contained"
-        onClick={() => onSearch(inputUrl.current?.value)}
+        onClick={() => onSearch(inputUrl)}
+        disabled={!isValidURL(inputUrl)}
       >
-        Go
+        {loading ? (
+          <CircularProgress size={20} sx={{ color: "white" }} />
+        ) : (
+          "GO"
+        )}
       </Button>
     </div>
   );

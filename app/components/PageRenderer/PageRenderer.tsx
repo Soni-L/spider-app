@@ -5,6 +5,7 @@ export default function PageRenderer() {
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
   const [styles, setStyles] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchPageContent = async (url: string) => {
     const response = await fetch(
@@ -17,9 +18,16 @@ export default function PageRenderer() {
   };
 
   const loadPage = async (url: string) => {
-    const data = await fetchPageContent(url);
-    setStyles(data.styles);
-    setHtml(data.html);
+    setLoading(true);
+    try {
+      const data = await fetchPageContent(url);
+      setStyles(data.styles);
+      setHtml(data.html);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -34,7 +42,7 @@ export default function PageRenderer() {
         // Create a new style element
         const styleElement = iframeDocument.createElement("style");
         styleElement.textContent = styles;
-        console.log(styleElement)
+        console.log(styleElement);
         // Append the style element to the head or body
         iframeDocument.head.appendChild(styleElement);
       }
@@ -51,7 +59,7 @@ export default function PageRenderer() {
         overflowY: "hidden",
       }}
     >
-      <SearchUrlBar onSearch={(url: string) => loadPage(url)} />
+      <SearchUrlBar onSearch={(url: string) => loadPage(url)} loading={loading}/>
       <div
         style={{
           height: "calc(100vh - 110px)",
