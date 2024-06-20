@@ -1,8 +1,9 @@
 "use client";
-
+import PageActions from "./components/PageActions/PageActions";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
 
 export default function Home() {
+
   return (
     <main
       style={{
@@ -12,15 +13,7 @@ export default function Home() {
       }}
     >
       <PageRenderer />
-      <div
-        style={{
-          flex: "0 0 auto",
-          backgroundColor: "lightgray",
-          height: "100%",
-          width: "350px",
-          borderLeft: "3px solid gray",
-        }}
-      ></div>
+      <PageActions />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
 
 export default function SearchUrlBar({

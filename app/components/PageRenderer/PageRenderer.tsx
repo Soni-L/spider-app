@@ -37,19 +37,64 @@ export default function PageRenderer() {
         iframeRef?.current?.contentWindow?.document;
       iframeDocument.open();
       iframeDocument.write(html);
+      iframeDocument.close();
 
       if (iframeDocument.head) {
         // Create a new style element
         const styleElement = iframeDocument.createElement("style");
         styleElement.textContent = styles;
-        console.log(styleElement);
         // Append the style element to the head or body
         iframeDocument.head.appendChild(styleElement);
       }
 
-      iframeDocument.close();
+      // Function to handle and stop events
+      const handleEvent = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        window.parent.postMessage(
+          {
+            type: event.type,
+            detail: { x: event.clientX, y: event.clientY, key: event.key },
+          },
+          "*"
+        );
+      };
+
+      // Add event listeners to stop events and send messages to the parent window
+      ["click"].forEach((eventType) => {
+        iframeDocument.addEventListener(eventType, handleEvent);
+      });
+
+      // Cleanup event listeners on component unmount
+      return () => {
+        ["click", "mousemove", "keydown"].forEach((eventType) => {
+          iframeDocument.removeEventListener(eventType, handleEvent);
+        });
+      };
     }
   }, [html, styles]);
+
+  useEffect(() => {
+    const handleEvent = (event) => {
+      const eventData = {
+        type: event.type,
+        timestamp: new Date().toISOString(),
+        details: event.detail || event.target.value || null,
+      };
+      window.parent.postMessage(eventData, "*");
+    };
+
+    const events = ["click", "mousemove", "keypress"];
+    events.forEach((eventType) => {
+      window.addEventListener(eventType, handleEvent);
+    });
+
+    return () => {
+      events.forEach((eventType) => {
+        window.removeEventListener(eventType, handleEvent);
+      });
+    };
+  }, []);
 
   return (
     <div
@@ -59,7 +104,10 @@ export default function PageRenderer() {
         overflowY: "hidden",
       }}
     >
-      <SearchUrlBar onSearch={(url: string) => loadPage(url)} loading={loading}/>
+      <SearchUrlBar
+        onSearch={(url: string) => loadPage(url)}
+        loading={loading}
+      />
       <div
         style={{
           height: "calc(100vh - 110px)",
