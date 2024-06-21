@@ -2,6 +2,24 @@
 import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
 
+// Function to get XPath of an element
+function getXPath(node) {
+  if (node.hasAttribute("id")) {
+    return "//" + node.tagName + '[@id="' + node.id + '"]';
+  }
+
+  if (node.hasAttribute("class")) {
+    return (
+      "//" + node.tagName + '[@class="' + node.getAttribute("class") + '"]'
+    );
+  }
+
+  var old = "/" + node.tagName;
+  var new_path = this.xpath(node.parentNode) + old;
+
+  return new_path;
+}
+
 export default memo(function PageRenderer() {
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
@@ -56,7 +74,8 @@ export default memo(function PageRenderer() {
           {
             originName: "target_site_iframe",
             type: event.type,
-            pathname: event.target.tagName,
+            xPath: getXPath(event.target),
+            content: event.target.innerText,
           },
           "*"
         );

@@ -41,13 +41,20 @@ export default memo(function PageActions() {
   };
 
   useEffect(() => {
+    if (eventArray.length > 0) {
+      console.log(eventArray[eventArray.length - 1]);
+      //document.body.style.cursor = "none";
+    }
+  }, [eventArray]);
+
+  useEffect(() => {
     const handleIframeEvent = (event) => {
       if (event.origin !== window.location.origin) {
         // Ensure the message is from the expected origin
         return;
       }
 
-      const { originName, type, pathname } = event.data;
+      const { originName, type, xPath } = event.data;
 
       if (originName !== "target_site_iframe") {
         return;
@@ -55,7 +62,7 @@ export default memo(function PageActions() {
 
       if (type === "click") {
         if (actionState === ACTION_STATE.CAPTURE) {
-          setEventArray((prevArray: any) => [...prevArray, { type, pathname }]);
+          setEventArray((prevArray: any) => [...prevArray, { type, xPath }]);
         }
       }
     };
@@ -133,7 +140,7 @@ export default memo(function PageActions() {
         </div>
         {eventArray.map((eventItem, index) => (
           <div style={{ width: "100%", border: "1px solid gray" }} key={index}>
-            {eventItem.type + " " + eventItem.pathname}
+            {eventItem.type + " " + eventItem.xPath}
           </div>
         ))}
       </>
