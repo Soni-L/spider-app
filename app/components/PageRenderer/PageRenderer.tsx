@@ -3,21 +3,37 @@ import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
 
 // Function to get XPath of an element
-function getXPath(node) {
-  if (node.hasAttribute("id")) {
-    return "//" + node.tagName + '[@id="' + node.id + '"]';
+
+function getXPath(element) {
+  if (element.id !== "") {
+    return 'id("' + element.id + '")';
+  }
+  if (element.id !== "") {
+    return 'id("' + element.id + '")';
+  }
+  if (element === document.body) {
+    return element.tagName;
   }
 
-  if (node.hasAttribute("class")) {
-    return (
-      "//" + node.tagName + '[@class="' + node.getAttribute("class") + '"]'
-    );
+  let ix = 0;
+  let siblings = element.parentNode.childNodes;
+  for (let i = 0; i < siblings.length; i++) {
+    let sibling = siblings[i];
+    if (sibling === element) {
+      return (
+        getXPath(element.parentNode) +
+        "/" +
+        element.tagName +
+        "[" +
+        (ix + 1) +
+        "]"
+      );
+    }
+    if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
+      ix++;
+    }
   }
-
-  var old = "/" + node.tagName;
-  var new_path = this.xpath(node.parentNode) + old;
-
-  return new_path;
+  return null;
 }
 
 export default memo(function PageRenderer() {
@@ -68,6 +84,9 @@ export default memo(function PageRenderer() {
 
       // Function to handle and stop events
       const handleEvent = (event) => {
+        let element = event.target;
+        let outerText = element.outerText
+        let displayContent = outerText || element.tagName;
         event.preventDefault();
         event.stopPropagation();
         window.parent.postMessage(
@@ -75,7 +94,7 @@ export default memo(function PageRenderer() {
             originName: "target_site_iframe",
             type: event.type,
             xPath: getXPath(event.target),
-            content: event.target.innerText,
+            content: displayContent,
           },
           "*"
         );

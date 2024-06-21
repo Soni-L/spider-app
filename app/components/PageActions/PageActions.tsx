@@ -54,7 +54,7 @@ export default memo(function PageActions() {
         return;
       }
 
-      const { originName, type, xPath } = event.data;
+      const { originName, type } = event.data;
 
       if (originName !== "target_site_iframe") {
         return;
@@ -62,7 +62,7 @@ export default memo(function PageActions() {
 
       if (type === "click") {
         if (actionState === ACTION_STATE.CAPTURE) {
-          setEventArray((prevArray: any) => [...prevArray, { type, xPath }]);
+          setEventArray((prevArray: any) => [...prevArray, event.data]);
         }
       }
     };
@@ -139,8 +139,16 @@ export default memo(function PageActions() {
           </IconButton>
         </div>
         {eventArray.map((eventItem, index) => (
-          <div style={{ width: "100%", border: "1px solid gray" }} key={index}>
-            {eventItem.type + " " + eventItem.xPath}
+          <div
+            style={{
+              width: "100%",
+              border: "1px solid gray",
+              padding: "2px 0",
+            }}
+            key={index}
+          >
+            <span style={{ fontWeight: "bold" }}>{eventItem.type + " "}</span>{" "}
+            {eventItem.content}
           </div>
         ))}
       </>
