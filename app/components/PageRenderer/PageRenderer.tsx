@@ -46,7 +46,7 @@ export default memo(function PageRenderer() {
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/fetch-page?url=${encodeURIComponent(url)}`
+      }/fetch-page?url=${encodeURIComponent(url)}`,{method: "POST"}
     );
     const data = await response.json();
     return data;
