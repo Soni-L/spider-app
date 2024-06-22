@@ -46,7 +46,8 @@ export default memo(function PageRenderer() {
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/fetch-page?url=${encodeURIComponent(url)}`,{method: "POST"}
+      }/fetch-page?url=${encodeURIComponent(url)}`,
+      { method: "GET", credentials: "include" }
     );
     const data = await response.json();
     return data;
@@ -85,7 +86,7 @@ export default memo(function PageRenderer() {
       // Function to handle and stop events
       const handleEvent = (event) => {
         let element = event.target;
-        let outerText = element.outerText
+        let outerText = element.outerText;
         let displayContent = outerText || element.tagName;
         event.preventDefault();
         event.stopPropagation();
