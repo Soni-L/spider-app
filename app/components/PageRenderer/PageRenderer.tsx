@@ -2,38 +2,32 @@
 import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
 
-// Function to get XPath of an element
-
 function getXPath(element) {
   if (element.id !== "") {
-    return 'id("' + element.id + '")';
-  }
-  if (element.id !== "") {
-    return 'id("' + element.id + '")';
+    return '//*[@id="' + element.id + '"]';
   }
   if (element === document.body) {
-    return element.tagName;
+    return "/html/body";
   }
 
-  let ix = 0;
-  let siblings = element.parentNode.childNodes;
+  let index = 0;
+  const siblings = element.parentNode.childNodes;
   for (let i = 0; i < siblings.length; i++) {
-    let sibling = siblings[i];
+    const sibling = siblings[i];
     if (sibling === element) {
       return (
         getXPath(element.parentNode) +
         "/" +
-        element.tagName +
+        element.tagName.toLowerCase() +
         "[" +
-        (ix + 1) +
+        (index + 1) +
         "]"
       );
     }
     if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
-      ix++;
+      index++;
     }
   }
-  return null;
 }
 
 export default memo(function PageRenderer() {
@@ -51,6 +45,17 @@ export default memo(function PageRenderer() {
     );
     const data = await response.json();
     return data;
+  };
+
+  const rerenderFromUserAction = async (xpath) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-actions?action=click&xpath=${xpath}`,
+      { method: "GET", credentials: "include" }
+    );
+
+    const data = await response.json();
+    setStyles(data.styles);
+    setHtml(data.html);
   };
 
   const loadPage = async (url: string) => {
@@ -75,6 +80,12 @@ export default memo(function PageRenderer() {
       iframeDocument.write(html);
       iframeDocument.close();
 
+      // Remove all <script> tags
+      const scripts = iframeDocument.getElementsByTagName("script");
+      while (scripts.length > 0) {
+        scripts[0].parentNode.removeChild(scripts[0]);
+      }
+
       if (iframeDocument.head) {
         // Create a new style element
         const styleElement = iframeDocument.createElement("style");
@@ -84,17 +95,26 @@ export default memo(function PageRenderer() {
       }
 
       // Function to handle and stop events
-      const handleEvent = (event) => {
+      const handleEvent = async (event) => {
         let element = event.target;
         let outerText = element.outerText;
         let displayContent = outerText || element.tagName;
         event.preventDefault();
         event.stopPropagation();
+
+        let xpath = getXPath(event.target);
+        if (event.type == "click") {
+          if (iframeRef?.current?.contentWindow?.document)
+            iframeRef.current.contentWindow.document.body.style.cursor = "wait";
+          await rerenderFromUserAction(xpath);
+          if (iframeRef?.current?.contentWindow?.document)
+            iframeRef.current.contentWindow.document.body.style.cursor = "none";
+        }
         window.parent.postMessage(
           {
             originName: "target_site_iframe",
             type: event.type,
-            xPath: getXPath(event.target),
+            xPath: xpath,
             content: displayContent,
           },
           "*"
@@ -157,6 +177,7 @@ export default memo(function PageRenderer() {
       >
         <iframe
           ref={iframeRef}
+          sandbox
           style={{ width: "100%", height: "100%", border: "0", margin: 0 }}
           title="Embedded Content"
         />
