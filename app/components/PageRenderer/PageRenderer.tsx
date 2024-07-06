@@ -50,16 +50,22 @@ export default memo(function PageRenderer() {
   };
 
   const rerenderFromUserAction = async (xpath) => {
-    setLoading(true);
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-actions?action=click&xpath=${xpath}`,
-      { method: "GET", credentials: "include" }
-    );
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-actions?action=click&xpath=${xpath}`,
+        { method: "GET", credentials: "include" }
+      );
 
-    const data = await response.json();
-    setStyles(data.styles);
-    setHtml(data.html);
-    setLoading(false);
+      const data = await response.json();
+      setStyles(data.styles);
+      setHtml(data.html);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadPage = async (url: string) => {
