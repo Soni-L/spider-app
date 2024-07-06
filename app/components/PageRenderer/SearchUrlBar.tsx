@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
+import { useTargetSite, useTargetSiteDispatch } from "@/app/page";
+import ReplayIcon from "@mui/icons-material/Replay";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function SearchUrlBar({
   onSearch,
@@ -8,7 +11,8 @@ export default function SearchUrlBar({
   onSearch: Function;
   loading: boolean;
 }) {
-  const [inputUrl, setInputUrl] = useState<string>("");
+  const targetSite = useTargetSite();
+  const targetSiteDispatch = useTargetSiteDispatch();
 
   function isValidURL(url: string) {
     var pattern = new RegExp(
@@ -34,24 +38,28 @@ export default function SearchUrlBar({
         borderBottom: "2px solid gray",
       }}
     >
+      <Button
+        style={{ borderRadius: "10px", margin: "0", height: "40px" }}
+        variant="outlined"
+        onClick={() => targetSiteDispatch({ type: "siteUrl", value: "" })}
+      >
+        <CloseIcon />
+      </Button>
       <TextField
         sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
         size="small"
-        value={inputUrl}
-        onChange={(e) => setInputUrl(e.target.value)}
+        value={targetSite.siteUrl}
         placeholder="Enter the url of your target site"
-        error={inputUrl.length > 0 && !isValidURL(inputUrl)}
       ></TextField>
       <Button
         style={{ borderRadius: "10px", margin: "0", height: "40px" }}
-        variant="contained"
-        onClick={() => onSearch(inputUrl)}
-        disabled={!isValidURL(inputUrl)}
+        variant="outlined"
+        onClick={() => onSearch(targetSite.siteUrl)}
       >
         {loading ? (
           <CircularProgress size={20} sx={{ color: "white" }} />
         ) : (
-          "GO"
+          <ReplayIcon />
         )}
       </Button>
     </div>

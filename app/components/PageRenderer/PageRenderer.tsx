@@ -1,6 +1,7 @@
 "use client";
 import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
+import { useTargetSite } from "../../page";
 
 function getXPath(element) {
   if (element.id !== "") {
@@ -31,6 +32,7 @@ function getXPath(element) {
 }
 
 export default memo(function PageRenderer() {
+  const targetSite = useTargetSite();
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
   const [styles, setStyles] = useState("");
@@ -48,6 +50,7 @@ export default memo(function PageRenderer() {
   };
 
   const rerenderFromUserAction = async (xpath) => {
+    setLoading(true);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-actions?action=click&xpath=${xpath}`,
       { method: "GET", credentials: "include" }
@@ -56,6 +59,7 @@ export default memo(function PageRenderer() {
     const data = await response.json();
     setStyles(data.styles);
     setHtml(data.html);
+    setLoading(false);
   };
 
   const loadPage = async (url: string) => {
@@ -70,6 +74,10 @@ export default memo(function PageRenderer() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadPage(targetSite.siteUrl);
+  }, []);
 
   useEffect(() => {
     if (iframeRef.current) {
@@ -173,14 +181,28 @@ export default memo(function PageRenderer() {
         style={{
           height: "calc(100vh - 110px)",
           width: "100%",
+          position: "relative",
         }}
       >
-        <iframe
-          ref={iframeRef}
-          sandbox
-          style={{ width: "100%", height: "100%", border: "0", margin: 0 }}
-          title="Embedded Content"
-        />
+        <>
+          <div
+            style={{
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              backgroundColor: "gray",
+              opacity: "0.9",
+              zIndex: 100,
+              display: loading == true ? "block" : "none",
+            }}
+          ></div>
+          <iframe
+            ref={iframeRef}
+            sandbox
+            style={{ width: "100%", height: "100%", border: "0", margin: 0 }}
+            title="Embedded Content"
+          />
+        </>
       </div>
     </div>
   );
