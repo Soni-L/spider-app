@@ -16,7 +16,7 @@ const ACTION_STATE = {
   CAPTURE: "CAPTURE",
 };
 
-export default memo(function PageActions() {
+export default memo(function CaptureActions() {
   const [eventArray, setEventArray] = useState([]);
   const [actionState, setActionState] = useState(ACTION_STATE.REST);
 

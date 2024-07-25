@@ -2,7 +2,7 @@
 import { createContext, useReducer, useContext, useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
-import PageActions from "./components/PageActions/PageActions";
+import CaptureActions from "./components/CaptureActions/CaptureActions";
 import {
   TargetSiteContext,
   TargetSiteDispatchContext,
@@ -105,7 +105,7 @@ function App() {
           ) : (
             <>
               <PageRenderer />
-              <PageActions />
+              <CaptureActions />
             </>
           )}
         </TargetSiteDispatchContext.Provider>

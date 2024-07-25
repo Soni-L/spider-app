@@ -1,52 +1,8 @@
-"use client";
-import React, { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
-import { useTargetSite } from "../../App";
+import { useTargetSite } from "../../contexts/TargetSiteContext";
+import { getXPath } from "../../helpers/helperFunctions";
 
-const getElementTreeXPath = function (element) {
-  var paths = [];
-
-  // Use nodeName (instead of localName) so namespace prefix is included (if any).
-  for (
-    ;
-    element && element.nodeType == Node.ELEMENT_NODE;
-    element = element.parentNode
-  ) {
-    var index = 0;
-    var hasFollowingSiblings = false;
-    for (
-      var sibling = element.previousSibling;
-      sibling;
-      sibling = sibling.previousSibling
-    ) {
-      // Ignore document type declaration.
-      if (sibling.nodeType == Node.DOCUMENT_TYPE_NODE) continue;
-
-      if (sibling.nodeName == element.nodeName) ++index;
-    }
-
-    for (
-      var sibling = element.nextSibling;
-      sibling && !hasFollowingSiblings;
-      sibling = sibling.nextSibling
-    ) {
-      if (sibling.nodeName == element.nodeName) hasFollowingSiblings = true;
-    }
-
-    var tagName =
-      (element.prefix ? element.prefix + ":" : "") + element.localName;
-    var pathIndex =
-      index || hasFollowingSiblings ? "[" + (index + 1) + "]" : "";
-    paths.splice(0, 0, tagName + pathIndex);
-  }
-
-  return paths.length ? "/" + paths.join("/") : null;
-};
-
-function getXPath(element) {
-  if (element && element.id) return '//*[@id="' + element.id + '"]';
-  else return getElementTreeXPath(element);
-}
 
 export default memo(function PageRenderer() {
   const targetSite = useTargetSite();
@@ -58,7 +14,7 @@ export default memo(function PageRenderer() {
   const fetchPageContent = async (url: string) => {
     const response = await fetch(
       `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
+        import.meta.env.VITE_APP_BACKEND_URL
       }/fetch-page?url=${encodeURIComponent(url)}`,
       { method: "GET", credentials: "include" }
     );
@@ -70,7 +26,7 @@ export default memo(function PageRenderer() {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.VITE_APP_BACKEND_URL}/user-actions?action=click&xpath=${xpath}&url=${targetSite.siteUrl}`,
+        `${import.meta.env.VITE_APP_BACKEND_URL}/user-actions?action=click&xpath=${xpath}&url=${targetSite.siteUrl}`,
         { method: "GET", credentials: "include" }
       );
 

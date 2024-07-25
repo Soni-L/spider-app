@@ -1,6 +1,8 @@
-import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
-import { useTargetSite, useTargetSiteDispatch } from "../../App";
+import {
+  useTargetSite,
+  useTargetSiteDispatch,
+} from "../../contexts/TargetSiteContext";
 import ReplayIcon from "@mui/icons-material/Replay";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -13,19 +15,6 @@ export default function SearchUrlBar({
 }) {
   const targetSite = useTargetSite();
   const targetSiteDispatch = useTargetSiteDispatch();
-
-  function isValidURL(url: string) {
-    var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
-    ); // fragment locator
-    return !!pattern.test(url);
-  }
 
   return (
     <div
