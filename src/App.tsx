@@ -1,8 +1,9 @@
-"use client";
+// src/App.js
 import { createContext, useReducer, useContext, useState } from "react";
-import PageActions from "./components/PageActions/PageActions";
-import PageRenderer from "./components/PageRenderer/PageRenderer";
 import { TextField, Button, CircularProgress } from "@mui/material";
+import PageRenderer from "./components/PageRenderer/PageRenderer";
+import PageActions from "./components/PageActions/PageActions";
+// import "./App.css";
 
 const ACTION_STATE = {
   PLAY: "PLAY",
@@ -11,7 +12,7 @@ const ACTION_STATE = {
 };
 
 function isValidURL(url: string) {
-  var pattern = new RegExp(
+  const pattern = new RegExp(
     "^(https?:\\/\\/)?" + // protocol
       "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
@@ -48,7 +49,7 @@ function targetSiteReducer(targetSite, action) {
   }
 }
 
-export default function Home() {
+function App() {
   const [targetSite, dispatch] = useReducer(targetSiteReducer, {
     siteUrl: "",
     actionState: ACTION_STATE.REST,
@@ -119,3 +120,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default App;

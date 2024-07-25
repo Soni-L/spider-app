@@ -1,7 +1,7 @@
 "use client";
 import React, { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
-import { useTargetSite } from "../../page";
+import { useTargetSite } from "../../App";
 
 const getElementTreeXPath = function (element) {
   var paths = [];
@@ -70,7 +70,7 @@ export default memo(function PageRenderer() {
     try {
       setLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-actions?action=click&xpath=${xpath}&url=${targetSite.siteUrl}`,
+        `${process.env.VITE_APP_BACKEND_URL}/user-actions?action=click&xpath=${xpath}&url=${targetSite.siteUrl}`,
         { method: "GET", credentials: "include" }
       );
 

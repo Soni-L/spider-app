@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
-import { useTargetSite, useTargetSiteDispatch } from "@/app/page";
+import { useTargetSite, useTargetSiteDispatch } from "../../App";
 import ReplayIcon from "@mui/icons-material/Replay";
 import CloseIcon from "@mui/icons-material/Close";
 
