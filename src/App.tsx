@@ -3,6 +3,10 @@ import { createContext, useReducer, useContext, useState } from "react";
 import { TextField, Button, CircularProgress } from "@mui/material";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
 import PageActions from "./components/PageActions/PageActions";
+import {
+  TargetSiteContext,
+  TargetSiteDispatchContext,
+} from "./contexts/TargetSiteContext";
 // import "./App.css";
 
 const ACTION_STATE = {
@@ -22,17 +26,6 @@ function isValidURL(url: string) {
     "i"
   ); // fragment locator
   return !!pattern.test(url);
-}
-
-const TargetSiteContext = createContext(null);
-const TargetSiteDispatchContext = createContext(null);
-
-export function useTargetSiteDispatch() {
-  return useContext(TargetSiteDispatchContext);
-}
-
-export function useTargetSite() {
-  return useContext(TargetSiteContext);
 }
 
 function targetSiteReducer(targetSite, action) {
