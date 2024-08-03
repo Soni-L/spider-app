@@ -1,10 +1,11 @@
 // src/App.js
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextField, Button } from "@mui/material";
 import PageRenderer from "./components/PageRenderer/PageRenderer";
 import CaptureActions from "./components/CaptureActions/CaptureActions";
 import useCrawlerSession from "./hooks/useCrawlerSession";
 import "./App.css";
+import { io } from "socket.io-client";
 
 function isValidURL(url: string) {
   const pattern = new RegExp(
@@ -19,9 +20,27 @@ function isValidURL(url: string) {
   return !!pattern.test(url);
 }
 
+const socket = io(import.meta.env.VITE_APP_SOCKET_URL);
+
 function App() {
   const [inputUrl, setInputUrl] = useState<string>("");
   const { crawlerSession, updateCrawlerSession } = useCrawlerSession();
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("message", (msg) => {
+      setMessages((prevMessages) => [...prevMessages, msg]);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("message");
+    };
+  }, []);
 
   return (
     <main
