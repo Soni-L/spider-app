@@ -6,19 +6,7 @@ import CaptureActions from "./components/CaptureActions/CaptureActions";
 import useCrawlerSession from "./hooks/useCrawlerSession";
 import "./App.css";
 import { io } from "socket.io-client";
-
-function isValidURL(url: string) {
-  const pattern = new RegExp(
-    "^(https?:\\/\\/)?" + // protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-      "(\\#[-a-z\\d_]*)?$",
-    "i"
-  ); // fragment locator
-  return !!pattern.test(url);
-}
+import { isValidURL } from "./helpers/helperFunctions";
 
 const socket = io(import.meta.env.VITE_APP_SOCKET_URL);
 
