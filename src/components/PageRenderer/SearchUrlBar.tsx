@@ -1,10 +1,7 @@
 import { TextField, Button, CircularProgress } from "@mui/material";
-import {
-  useTargetSite,
-  useTargetSiteDispatch,
-} from "../../contexts/TargetSiteContext";
 import ReplayIcon from "@mui/icons-material/Replay";
 import CloseIcon from "@mui/icons-material/Close";
+import useCrawlerSession from "../../hooks/useCrawlerSession";
 
 export default function SearchUrlBar({
   onSearch,
@@ -13,8 +10,7 @@ export default function SearchUrlBar({
   onSearch: Function;
   loading: boolean;
 }) {
-  const targetSite = useTargetSite();
-  const targetSiteDispatch = useTargetSiteDispatch();
+  const { crawlerSession, updateCrawlerSession } = useCrawlerSession();
 
   return (
     <div
@@ -30,20 +26,20 @@ export default function SearchUrlBar({
       <Button
         style={{ borderRadius: "10px", margin: "0", height: "40px" }}
         variant="outlined"
-        onClick={() => targetSiteDispatch({ type: "siteUrl", value: "" })}
+        onClick={() => updateCrawlerSession({ targetSiteUrl: "" })}
       >
         <CloseIcon />
       </Button>
       <TextField
         sx={{ flexGrow: 1, backgroundColor: "white", margin: "0" }}
         size="small"
-        value={targetSite.siteUrl}
+        value={crawlerSession.targetSiteUrl}
         placeholder="Enter the url of your target site"
       ></TextField>
       <Button
         style={{ borderRadius: "10px", margin: "0", height: "40px" }}
         variant="outlined"
-        onClick={() => onSearch(targetSite.siteUrl)}
+        onClick={() => onSearch(crawlerSession.targetSiteUrl)}
       >
         {loading ? (
           <CircularProgress size={20} sx={{ color: "white" }} />

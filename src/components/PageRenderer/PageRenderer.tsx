@@ -1,11 +1,10 @@
 import { memo, useState, useEffect, useRef } from "react";
 import SearchUrlBar from "./SearchUrlBar";
-import { useTargetSite } from "../../contexts/TargetSiteContext";
 import { getXPath } from "../../helpers/helperFunctions";
-
+import useCrawlerSession from "../../hooks/useCrawlerSession";
 
 export default memo(function PageRenderer() {
-  const targetSite = useTargetSite();
+  const { crawlerSession } = useCrawlerSession();
   const iframeRef = useRef(null);
   const [html, setHtml] = useState("");
   const [styles, setStyles] = useState("");
@@ -26,7 +25,11 @@ export default memo(function PageRenderer() {
     try {
       setLoading(true);
       const response = await fetch(
-        `${import.meta.env.VITE_APP_BACKEND_URL}/user-actions?action=click&xpath=${xpath}&url=${targetSite.siteUrl}`,
+        `${
+          import.meta.env.VITE_APP_BACKEND_URL
+        }/user-actions?action=click&xpath=${xpath}&url=${
+          crawlerSession.targetSiteUrl
+        }`,
         { method: "GET", credentials: "include" }
       );
 
@@ -55,7 +58,7 @@ export default memo(function PageRenderer() {
   };
 
   useEffect(() => {
-    loadPage(targetSite.siteUrl);
+    loadPage(crawlerSession.targetSiteUrl);
   }, []);
 
   useEffect(() => {
